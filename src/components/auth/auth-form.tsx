@@ -46,8 +46,7 @@ export function AuthForm({ className, mode, ...props }: AuthFormProps) {
   const [showPassword, setShowPassword] = React.useState<boolean>(false);
   const [captcha, setCaptcha] = React.useState({ num1: 0, num2: 0, answer: 0 });
 
-  const [user, setUser] = React.useState<User | null>(null);
-  const [isUserLoading, setIsUserLoading] = React.useState(true);
+
 
 
   const schema = mode === 'login' ? loginSchema : signupSchema;
@@ -71,16 +70,7 @@ export function AuthForm({ className, mode, ...props }: AuthFormProps) {
     generateCaptcha();
   }, []);
 
-  React.useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setIsUserLoading(false);
-      if (user) {
-        router.push('/');
-      }
-    });
-    return () => unsubscribe();
-  }, [auth, router]);
+
 
 
   async function onSubmit(data: FormData) {
