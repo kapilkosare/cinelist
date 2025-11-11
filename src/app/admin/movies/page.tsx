@@ -51,14 +51,13 @@ import { useToast } from '@/hooks/use-toast';
 import { BackButton } from '@/components/layout/back-button';
 
 export default function AdminMoviesPage() {
-  const { user, isUserLoading } = useUser();
+  const { user, appUser, isUserLoading } = useUser();
   const router = useRouter();
   const firestore = useFirestore();
   const { toast } = useToast();
   const [movieToDelete, setMovieToDelete] = React.useState<string | null>(null);
 
-  // In a real app, you'd fetch the user's role from Firestore
-  const isSuperAdmin = true; // Placeholder
+  const isSuperAdmin = appUser?.role === 'SUPER_ADMIN';
 
   const moviesQuery = useMemoFirebase(() => query(
     collection(firestore, 'movies'),
@@ -79,8 +78,7 @@ export default function AdminMoviesPage() {
       if (!user) {
         router.push('/login');
       } else if (!isSuperAdmin) {
-        // You can also check for a specific role from Firestore here
-        router.push('/'); // Redirect non-admins
+        router.push('/'); 
       }
     }
   }, [user, isUserLoading, isSuperAdmin, router]);

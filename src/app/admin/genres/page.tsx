@@ -66,7 +66,7 @@ const genreSchema = z.object({
 type GenreFormData = z.infer<typeof genreSchema>;
 
 export default function AdminGenresPage() {
-  const { user, isUserLoading } = useUser();
+  const { user, appUser, isUserLoading } = useUser();
   const router = useRouter();
   const firestore = useFirestore();
   const { toast } = useToast();
@@ -74,8 +74,7 @@ export default function AdminGenresPage() {
   const [genreToEdit, setGenreToEdit] = React.useState<Genre | null>(null);
   const [genreToDelete, setGenreToDelete] = React.useState<Genre | null>(null);
   
-  // In a real app, this would be derived from the user's role in Firestore
-  const isSuperAdmin = true;
+  const isSuperAdmin = appUser?.role === 'SUPER_ADMIN';
 
   const genresQuery = useMemoFirebase(
     () => query(collection(firestore, 'genres'), orderBy('name', 'asc')),

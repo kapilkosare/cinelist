@@ -2,8 +2,9 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Clapperboard, Tv, User, Shield, Film, Users, Tag } from 'lucide-react';
+import { Home, Clapperboard, Tv, User, Shield, Film as FilmIcon, Users, Tag } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useUser } from '@/firebase';
 
 const mainNavItems = [
   { href: '/', label: 'Home', icon: Home },
@@ -14,17 +15,17 @@ const mainNavItems = [
 
 const adminNavItems = [
   { href: '/admin', label: 'Dashboard', icon: Home },
-  { href: '/admin/movies', label: 'Movies', icon: Film },
+  { href: '/admin/movies', label: 'Content', icon: FilmIcon },
   { href: '/admin/users', label: 'Users', icon: Users },
   { href: '/admin/genres', label: 'Genres', icon: Tag },
 ];
 
 export function SidebarNav() {
   const pathname = usePathname();
+  const { appUser } = useUser();
   const isAdminPath = pathname.startsWith('/admin');
   
-  // In a real app, this would be derived from the user's session
-  const isSuperAdmin = true; 
+  const isSuperAdmin = appUser?.role === 'SUPER_ADMIN';
 
   const navItems = isAdminPath ? adminNavItems : mainNavItems;
 
@@ -32,7 +33,7 @@ export function SidebarNav() {
     <aside className="hidden lg:flex flex-col w-64 border-r bg-background/80">
       <div className="flex items-center h-16 border-b px-6">
         <Link href="/" className="flex items-center gap-2">
-           <Film className="h-6 w-6 text-primary" />
+           <FilmIcon className="h-6 w-6 text-primary" />
             <span className="font-headline text-2xl font-bold">
               Cinelist
             </span>

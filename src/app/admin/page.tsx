@@ -10,11 +10,10 @@ import { Film, Users, Tag } from 'lucide-react';
 
 
 export default function AdminDashboardPage() {
-  const { user, isUserLoading } = useUser();
+  const { user, appUser, isUserLoading } = useUser();
   const router = useRouter();
 
-  // In a real app, this would be derived from the user's role in Firestore
-  const isSuperAdmin = true;
+  const isSuperAdmin = appUser?.role === 'SUPER_ADMIN';
 
   useEffect(() => {
     if (!isUserLoading) {

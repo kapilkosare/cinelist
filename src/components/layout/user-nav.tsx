@@ -16,11 +16,12 @@ import { useRouter } from 'next/navigation';
 import { useAuth, useUser } from '@/firebase';
 import { signOut } from 'firebase/auth';
 import { useToast } from '@/hooks/use-toast';
+import { Shield } from 'lucide-react';
 
 export function UserNav() {
   const router = useRouter();
   const auth = useAuth();
-  const { user, isUserLoading } = useUser();
+  const { user, appUser, isUserLoading } = useUser();
   const { toast } = useToast();
 
   const handleSignOut = async () => {
@@ -88,6 +89,14 @@ export function UserNav() {
           <DropdownMenuItem asChild>
             <Link href="/my-list">My List</Link>
           </DropdownMenuItem>
+          {appUser?.role === 'SUPER_ADMIN' && (
+             <DropdownMenuItem asChild>
+                <Link href="/admin">
+                    <Shield className="mr-2 h-4 w-4" />
+                    <span>Admin Panel</span>
+                </Link>
+             </DropdownMenuItem>
+          )}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleSignOut}>
