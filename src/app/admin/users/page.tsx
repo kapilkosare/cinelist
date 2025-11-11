@@ -63,6 +63,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { BackButton } from '@/components/layout/back-button';
+import { ExitAdminButton } from '@/components/layout/exit-admin-button';
 
 interface AppSettings {
     isSignupEnabled: boolean;
@@ -174,7 +175,10 @@ export default function AdminUsersPage() {
   return (
     <>
       <AppLayout>
-        <BackButton />
+        <div className="flex justify-between items-center mb-4">
+            <BackButton />
+            <ExitAdminButton />
+        </div>
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold font-headline">Users</h1>

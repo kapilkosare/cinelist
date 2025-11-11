@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Film, Users, Tag } from 'lucide-react';
+import { ExitAdminButton } from '@/components/layout/exit-admin-button';
 
 
 export default function AdminDashboardPage() {
@@ -34,6 +35,7 @@ export default function AdminDashboardPage() {
       <div className="container py-8">
         <div className="flex items-center justify-between space-y-2">
           <h2 className="text-3xl font-bold tracking-tight">Admin Dashboard</h2>
+          <ExitAdminButton />
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mt-8">
             <Link href="/admin/movies">

@@ -7,6 +7,7 @@ import { MovieForm } from '@/components/features/movie-form';
 import { useDoc, useFirestore, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import type { Movie } from '@/lib/types';
+import { ExitAdminButton } from '@/components/layout/exit-admin-button';
 
 interface EditMoviePageProps {
   params: Promise<{
@@ -23,7 +24,10 @@ export default function EditMoviePage({ params }: EditMoviePageProps) {
   return (
     <AppLayout>
       <div className="max-w-2xl mx-auto">
-        <BackButton />
+        <div className="flex justify-between items-center mb-4">
+            <BackButton />
+            <ExitAdminButton />
+        </div>
         <h1 className="text-3xl font-bold font-headline">Edit Content</h1>
         <p className="text-muted-foreground mt-1">Update the content details below.</p>
         {isLoading ? (

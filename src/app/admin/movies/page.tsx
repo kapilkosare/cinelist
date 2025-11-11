@@ -49,6 +49,7 @@ import { deleteDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { doc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { BackButton } from '@/components/layout/back-button';
+import { ExitAdminButton } from '@/components/layout/exit-admin-button';
 
 export default function AdminMoviesPage() {
   const { user, appUser, isUserLoading } = useUser();
@@ -106,7 +107,10 @@ export default function AdminMoviesPage() {
   return (
     <>
       <AppLayout>
-        <BackButton />
+        <div className="flex justify-between items-center mb-4">
+          <BackButton />
+          <ExitAdminButton />
+        </div>
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold font-headline">Content Catalog</h1>

@@ -58,6 +58,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Label } from '@/components/ui/label';
 import { BackButton } from '@/components/layout/back-button';
+import { ExitAdminButton } from '@/components/layout/exit-admin-button';
 
 const genreSchema = z.object({
   name: z.string().min(1, 'Genre name is required.'),
@@ -158,7 +159,10 @@ export default function AdminGenresPage() {
   return (
     <>
       <AppLayout>
-        <BackButton />
+        <div className="flex justify-between items-center mb-4">
+          <BackButton />
+          <ExitAdminButton />
+        </div>
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold font-headline">Genres</h1>
