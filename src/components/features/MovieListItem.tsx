@@ -20,8 +20,9 @@ import { useToast } from '@/hooks/use-toast';
 import { collection, query, where, limit, doc } from 'firebase/firestore';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import { AddToListDialog } from './add-to-list-dialog';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 import { MovieCard } from './movie-card';
+import { Badge } from '../ui/badge';
+import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog';
 
 
 interface MovieListItemProps {
@@ -130,71 +131,73 @@ export function MovieListItem({ movie, onPlayTrailer, className, view }: MovieLi
     return (
         <>
           <TooltipProvider>
-            <div className={cn("flex items-center gap-4 rounded-lg p-3 transition-colors hover:bg-muted/50 border", className)}>
-                <div className="relative flex-shrink-0 w-24 h-14 overflow-hidden rounded-md">
-                    <Image
-                        src={posterUrl}
-                        alt={movie.title ?? 'Movie poster'}
-                        fill
-                        className="object-cover"
-                        sizes="10vw"
-                    />
-                </div>
-                <div className="flex-grow min-w-0">
-                    <div className="flex items-center gap-2">
-                        <h3 className="font-headline text-base font-semibold truncate">{movie.title}</h3>
-                        
-                        <div className="flex items-center gap-2 text-xs text-muted-foreground flex-shrink-0">
-                            {movie.year && <span className="border-l pl-2">{movie.year}</span>}
-                            {movie.rating && (
-                                <div className="flex items-center gap-1 border-l pl-2">
-                                    <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
-                                    <span className="font-bold text-foreground">
-                                    {movie.rating.toFixed(1)}
-                                    </span>
-                                </div>
-                            )}
-                        </div>
-                        <div className="flex items-center gap-0 ml-auto">
-                           
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <Button variant="ghost" size="icon" className="h-9 w-9" onClick={handleToggleWantToWatch} disabled={isLoadingUserMovie}>
-                                    {isLoadingUserMovie ? <Loader2 className="h-5 w-5 animate-spin" /> : wantToWatch ? <ListChecks className="h-5 w-5 text-primary" /> : <ListPlus className="h-5 w-5" />}
-                                    </Button>
-                                </TooltipTrigger>
-                                <TooltipContent><p>{wantToWatch ? 'Remove from My List' : 'Add to My List'}</p></TooltipContent>
-                            </Tooltip>
-
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <Button variant="ghost" size="icon" className="h-9 w-9" onClick={handleToggleWatched} disabled={isLoadingUserMovie}>
-                                    {isLoadingUserMovie ? <Loader2 className="h-5 w-5 animate-spin" /> : hasWatched ? <Tv2 className="h-5 w-5 text-primary" /> : <Tv className="h-5 w-5" />}
-                                    </Button>
-                                </TooltipTrigger>
-                                <TooltipContent><p>{hasWatched ? 'Remove from Watched' : 'Mark as Watched'}</p></TooltipContent>
-                            </Tooltip>
-
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => onPlayTrailer(movie)}>
-                                        <PlayCircle className="h-5 w-5" />
-                                    </Button>
-                                </TooltipTrigger>
-                                <TooltipContent><p>Play Trailer</p></TooltipContent>
-                            </Tooltip>
-                        </div>
+            <div className={cn("flex items-start gap-4 rounded-lg p-3 transition-colors hover:bg-muted/50 border", className)}>
+                <div className="flex-shrink-0 w-24">
+                    <div className="relative w-full h-14 overflow-hidden rounded-md">
+                        <Image
+                            src={posterUrl}
+                            alt={movie.title ?? 'Movie poster'}
+                            fill
+                            className="object-cover"
+                            sizes="10vw"
+                        />
                     </div>
-                    <p 
-                        className="text-xs text-muted-foreground mt-1 overflow-hidden"
-                        style={{
-                            display: '-webkit-box',
-                            WebkitLineClamp: 2,
-                            WebkitBoxOrient: 'vertical',
-                        }}
-                    >
-                        {movie.description}
-                    </p>
+                    <div className="flex justify-between items-center mt-1 text-xs text-muted-foreground">
+                        {movie.year && <span>{movie.year}</span>}
+                        {movie.rating && (
+                            <div className="flex items-center gap-1">
+                                <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
+                                <span className="font-bold text-foreground">
+                                {movie.rating.toFixed(1)}
+                                </span>
+                            </div>
+                        )}
+                    </div>
+                </div>
+                
+                <div className="flex-grow min-w-0 flex items-start gap-2">
+                    <div className='flex-grow'>
+                        <h3 className="font-headline text-base font-semibold truncate flex-grow">{movie.title}</h3>
+                        <p 
+                            className="text-xs text-muted-foreground mt-1 overflow-hidden"
+                            style={{
+                                display: '-webkit-box',
+                                WebkitLineClamp: 2,
+                                WebkitBoxOrient: 'vertical',
+                            }}
+                        >
+                            {movie.description}
+                        </p>
+                    </div>
+                    
+                    <div className="flex items-start gap-0 ml-auto flex-shrink-0">
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-9 w-9" onClick={handleToggleWantToWatch} disabled={isLoadingUserMovie}>
+                                {isLoadingUserMovie ? <Loader2 className="h-5 w-5 animate-spin" /> : wantToWatch ? <ListChecks className="h-5 w-5 text-primary" /> : <ListPlus className="h-5 w-5" />}
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent><p>{wantToWatch ? 'Remove from My List' : 'Add to My List'}</p></TooltipContent>
+                        </Tooltip>
+
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-9 w-9" onClick={handleToggleWatched} disabled={isLoadingUserMovie}>
+                                {isLoadingUserMovie ? <Loader2 className="h-5 w-5 animate-spin" /> : hasWatched ? <Tv2 className="h-5 w-5 text-primary" /> : <Tv className="h-5 w-5" />}
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent><p>{hasWatched ? 'Remove from Watched' : 'Mark as Watched'}</p></TooltipContent>
+                        </Tooltip>
+
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => onPlayTrailer(movie)}>
+                                    <PlayCircle className="h-5 w-5" />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent><p>Play Trailer</p></TooltipContent>
+                        </Tooltip>
+                    </div>
                 </div>
             </div>
           </TooltipProvider>
@@ -304,7 +307,3 @@ export function MovieListItem({ movie, onPlayTrailer, className, view }: MovieLi
     </>
   );
 }
-
-    
-
-    
