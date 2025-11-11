@@ -12,7 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2, Eye, EyeOff } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useAuth, initiateEmailSignUp, initiateEmailSignIn } from '@/firebase';
+import { useAuth, useUser, initiateEmailSignUp, initiateEmailSignIn } from '@/firebase';
 import { User, onAuthStateChanged } from 'firebase/auth';
 
 interface AuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -42,6 +42,7 @@ export function AuthForm({ className, mode, ...props }: AuthFormProps) {
   const router = useRouter();
   const { toast } = useToast();
   const auth = useAuth();
+  const { user, isUserLoading } = useUser();
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [showPassword, setShowPassword] = React.useState<boolean>(false);
   const [captcha, setCaptcha] = React.useState({ num1: 0, num2: 0, answer: 0 });
@@ -70,7 +71,15 @@ export function AuthForm({ className, mode, ...props }: AuthFormProps) {
     generateCaptcha();
   }, []);
 
-
+  React.useEffect(() => {
+    // If the user object is available and we're not still on the initial load,
+    // it means the user has successfully logged in.
+    if (user && !isUserLoading) {
+      router.push('/');
+    }
+    // We don't want this effect to re-run on router changes, only when the user state updates.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, isUserLoading]);
 
 
   async function onSubmit(data: FormData) {
@@ -105,7 +114,6 @@ export function AuthForm({ className, mode, ...props }: AuthFormProps) {
           title: 'Login Successful',
           description: "You're now being logged in.",
         });
-        // The onAuthStateChanged listener will handle the redirect.
       }
     } catch (error: any) {
       let description = 'An unexpected error occurred.';
@@ -224,7 +232,7 @@ export function AuthForm({ className, mode, ...props }: AuthFormProps) {
             )}
           </div>
 
-          <Button disabled={isLoading}>
+          <Button disabled={isLoading || isUserLoading}>
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {mode === 'login' ? 'Sign In' : 'Create Account'}
           </Button>
