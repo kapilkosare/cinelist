@@ -1,3 +1,4 @@
+
 'use client';
 
 import { AppLayout } from '@/components/layout/app-layout';
@@ -170,6 +171,7 @@ export default function ProfilePage() {
   return (
     <>
     <AppLayout>
+      <div className="pb-16">
       <BackButton />
       <h1 className="text-3xl font-bold font-headline">My Profile</h1>
       <p className="text-muted-foreground mt-2">
@@ -303,6 +305,7 @@ export default function ProfilePage() {
             </CardContent>
           </Card>
         </div>
+      </div>
       </div>
     </AppLayout>
 

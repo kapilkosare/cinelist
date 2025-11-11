@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -107,6 +108,7 @@ export default function AdminMoviesPage() {
   return (
     <>
       <AppLayout>
+        <div className="pb-16">
         <div className="flex justify-between items-center mb-4">
           <BackButton />
           <ExitAdminButton />
@@ -230,6 +232,7 @@ export default function AdminMoviesPage() {
             </Table>
           </CardContent>
         </Card>
+        </div>
       </AppLayout>
 
       <AlertDialog open={!!movieToDelete} onOpenChange={(open) => !open && setMovieToDelete(null)}>

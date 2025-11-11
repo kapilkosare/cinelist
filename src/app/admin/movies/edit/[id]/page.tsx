@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -23,7 +24,7 @@ export default function EditMoviePage({ params }: EditMoviePageProps) {
 
   return (
     <AppLayout>
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-2xl mx-auto pb-16">
         <div className="flex justify-between items-center mb-4">
             <BackButton />
             <ExitAdminButton />

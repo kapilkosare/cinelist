@@ -175,6 +175,7 @@ export default function AdminUsersPage() {
   return (
     <>
       <AppLayout>
+        <div className="pb-16">
         <div className="flex justify-between items-center mb-4">
             <BackButton />
             <ExitAdminButton />
@@ -297,6 +298,7 @@ export default function AdminUsersPage() {
             </Table>
           </CardContent>
         </Card>
+        </div>
       </AppLayout>
       
       <AlertDialog open={!!userToDelete} onOpenChange={(open) => !open && setUserToDelete(null)}>

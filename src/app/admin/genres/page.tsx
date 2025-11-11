@@ -159,6 +159,7 @@ export default function AdminGenresPage() {
   return (
     <>
       <AppLayout>
+        <div className="pb-16">
         <div className="flex justify-between items-center mb-4">
           <BackButton />
           <ExitAdminButton />
@@ -253,6 +254,7 @@ export default function AdminGenresPage() {
               </CardContent>
             </Card>
           </div>
+        </div>
         </div>
       </AppLayout>
 

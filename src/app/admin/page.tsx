@@ -1,3 +1,4 @@
+
 'use client';
 
 import { AppLayout } from '@/components/layout/app-layout';
@@ -32,7 +33,7 @@ export default function AdminDashboardPage() {
 
   return (
     <AppLayout>
-      <div className="container py-8">
+      <div className="container py-8 pb-16">
         <div className="flex items-center justify-between space-y-2">
           <h2 className="text-3xl font-bold tracking-tight">Admin Dashboard</h2>
           <ExitAdminButton />

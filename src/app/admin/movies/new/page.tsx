@@ -1,3 +1,4 @@
+
 'use client';
 
 import { AppLayout } from '@/components/layout/app-layout';
@@ -8,7 +9,7 @@ import { ExitAdminButton } from '@/components/layout/exit-admin-button';
 export default function NewMoviePage() {
   return (
     <AppLayout>
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-2xl mx-auto pb-16">
         <div className="flex justify-between items-center mb-4">
             <BackButton />
             <ExitAdminButton />

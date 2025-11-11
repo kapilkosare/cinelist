@@ -142,6 +142,7 @@ export default function WatchedPage() {
 
   return (
     <AppLayout>
+      <div className="pb-16">
         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
             <div>
                 <BackButton />
@@ -195,6 +196,7 @@ export default function WatchedPage() {
           Error loading your watched list: {userMoviesError.message}
         </p>
       )}
+      </div>
       {selectedMovie && (
         <TrailerModal
           movie={selectedMovie}

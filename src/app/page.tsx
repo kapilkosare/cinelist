@@ -234,7 +234,7 @@ export default function HomePage() {
 
   return (
     <AppLayout>
-      <div className="container py-8">
+      <div className="container py-8 pb-16">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
                 <h1 className="text-3xl font-bold font-headline">
