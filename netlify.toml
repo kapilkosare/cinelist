@@ -1,0 +1,35 @@
+# Netlify configuration file
+# For more information, see https://docs.netlify.com/configure-builds/file-based-configuration/
+
+[build]
+  # This will be run the command to build your site.
+  command = "npm run build"
+  # This is the directory that you are publishing from.
+  publish = ".next"
+
+[functions]
+  # This is the directory where your serverless functions are located.
+  directory = ".next/functions"
+
+[[redirects]]
+  # This rule handles static assets from the public directory.
+  from = "/_next/static/*"
+  to = "/static/:splat"
+  status = 200
+
+[[redirects]]
+  # This rule ensures that all pages are rendered by Next.js.
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[images]
+  # Remote patterns for Netlify Image CDN
+  remote_patterns = [
+    "https://placehold.co/.*",
+    "https://images.unsplash.com/.*",
+    "https://picsum.photos/.*",
+    "https://m.media-amazon.com/.*",
+    "https://image.tmdb.org/.*",
+    "https://img.youtube.com/.*",
+  ]
