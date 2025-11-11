@@ -20,6 +20,7 @@ import Link from 'next/link';
 import { TrailerModal } from '@/components/features/trailer-modal';
 import { Skeleton } from '@/components/ui/skeleton';
 import { MovieCard } from '@/components/features/movie-card';
+import { MovieListItem } from '@/components/features/MovieListItem';
 import {
   Select,
   SelectContent,
@@ -35,7 +36,7 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination';
 import { Input } from '@/components/ui/input';
-import { Search, SlidersHorizontal } from 'lucide-react';
+import { Search, SlidersHorizontal, Grid, List, LayoutList } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
     Accordion,
@@ -44,11 +45,13 @@ import {
     AccordionTrigger,
   } from "@/components/ui/accordion"
 import { cn } from '@/lib/utils';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 
 const MOVIES_PER_PAGE = 15;
 const contentTypes: ContentType[] = ["Movie", "Web Series", "OTT", "Documentary", "Other"];
 const allTabs = ["All", ...contentTypes];
+type ViewMode = 'grid' | 'list' | 'details';
 
 export default function MyListPage() {
   const { user, isUserLoading } = useUser();
@@ -63,6 +66,7 @@ export default function MyListPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOrder, setSortOrder] = useState('title-asc');
   const [activeTab, setActiveTab] = useState<string>("All");
+  const [viewMode, setViewMode] = useState<ViewMode>('details');
 
 
   const userMoviesQuery = useMemoFirebase(() => {
@@ -219,6 +223,37 @@ export default function MyListPage() {
   
   const hasMoviesInList = wantToWatchList.length > 0;
 
+  const viewSwitcher = (
+    <TooltipProvider>
+      <div className="flex items-center gap-1 rounded-md bg-muted p-1">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button variant={viewMode === 'grid' ? 'outline' : 'ghost'} size="icon" className="h-8 w-8 bg-background" onClick={() => setViewMode('grid')}>
+              <Grid className="h-4 w-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>Grid View</TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button variant={viewMode === 'list' ? 'outline' : 'ghost'} size="icon" className="h-8 w-8 bg-background" onClick={() => setViewMode('list')}>
+              <List className="h-4 w-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>List View</TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button variant={viewMode === 'details' ? 'outline' : 'ghost'} size="icon" className="h-8 w-8 bg-background" onClick={() => setViewMode('details')}>
+              <LayoutList className="h-4 w-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>Details View</TooltipContent>
+        </Tooltip>
+      </div>
+    </TooltipProvider>
+  );
+
   const filtersContent = (
     <div className="flex flex-col md:flex-row gap-4">
         <div className="relative w-full md:max-w-xs">
@@ -280,6 +315,9 @@ export default function MyListPage() {
                     Content you want to watch.
                     </p>
                 </div>
+                <div className="hidden md:block">
+                    {viewSwitcher}
+                </div>
             </div>
           </div>
           
@@ -296,11 +334,18 @@ export default function MyListPage() {
                 {/* Mobile Filters */}
                 <div className="md:hidden">
                     <Accordion type="single" collapsible>
-                        <AccordionItem value="filters">
-                            <AccordionTrigger className={cn(buttonVariants({ variant: 'outline' }), 'w-full')}>
-                                <SlidersHorizontal className="mr-2 h-4 w-4" />
-                                Filters
-                            </AccordionTrigger>
+                        <AccordionItem value="filters" className="border-b-0">
+                            <div className="flex items-center justify-between">
+                                <AccordionTrigger className={cn(buttonVariants({ variant: 'outline' }), 'flex-1 justify-between pr-2')}>
+                                    <div className="flex items-center">
+                                        <SlidersHorizontal className="mr-2 h-4 w-4" />
+                                        Filters
+                                    </div>
+                                </AccordionTrigger>
+                                <div className="ml-2">
+                                  {viewSwitcher}
+                                </div>
+                            </div>
                             <AccordionContent className="p-4 bg-muted/50 rounded-b-lg">
                                 <div className="space-y-4">
                                     {filtersContent}
@@ -318,53 +363,62 @@ export default function MyListPage() {
           </Tabs>
 
           {isLoading ? (
-            <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-6 gap-y-10">
-              {Array.from({ length: 10 }).map((_, i) => (
-                <div key={i} className="space-y-3">
-                  <Skeleton className="aspect-video rounded-lg" />
-                  <Skeleton className="h-5 w-4/5 rounded-md" />
-                  <Skeleton className="h-9 w-full rounded-md" />
+            viewMode === 'grid' ? (
+                <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-6 gap-y-10">
+                {Array.from({ length: 10 }).map((_, i) => (
+                    <div key={i} className="space-y-3">
+                    <Skeleton className="aspect-video rounded-lg" />
+                    <Skeleton className="h-5 w-4/5 rounded-md" />
+                    <Skeleton className="h-9 w-full rounded-md" />
+                    </div>
+                ))}
                 </div>
-              ))}
-            </div>
+            ) : (
+                <div className="mt-8 space-y-4">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                        <Skeleton key={i} className="h-28 w-full rounded-lg" />
+                    ))}
+                </div>
+            )
           ) : paginatedMovies.length > 0 ? (
             <>
-            <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-6 gap-y-10">
-              {paginatedMovies.map((movie) => (
-                <MovieCard key={movie.id} movie={movie} onPlayTrailer={handlePlayTrailer} />
-              ))}
-            </div>
-            {totalPages > 1 && (
-                <Pagination>
-                    <PaginationContent>
-                    <PaginationItem>
-                        <PaginationPrevious
-                        href="#"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            setCurrentPage((p) => Math.max(1, p - 1));
-                        }}
-                        aria-disabled={currentPage === 1}
-                        className={currentPage === 1 ? "pointer-events-none opacity-50" : undefined}
-                        />
-                    </PaginationItem>
-                     <PaginationItem className="hidden sm:flex items-center text-sm font-medium">
-                        Page {currentPage} of {totalPages}
-                    </PaginationItem>
-                    <PaginationItem>
-                        <PaginationNext
-                        href="#"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            setCurrentPage((p) => Math.min(totalPages, p + 1));
-                        }}
-                        aria-disabled={currentPage === totalPages}
-                        className={currentPage === totalPages ? "pointer-events-none opacity-50" : undefined}
-                        />
-                    </PaginationItem>
-                    </PaginationContent>
-                </Pagination>
-            )}
+                <div className={cn("mt-8", viewMode === 'grid' ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-6 gap-y-10" : "space-y-4")}>
+                    {paginatedMovies.map((movie) => (
+                        <MovieListItem key={movie.id} movie={movie} onPlayTrailer={handlePlayTrailer} view={viewMode} />
+                    ))}
+                </div>
+
+                {totalPages > 1 && (
+                    <Pagination className="mt-8">
+                        <PaginationContent>
+                        <PaginationItem>
+                            <PaginationPrevious
+                            href="#"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                setCurrentPage((p) => Math.max(1, p - 1));
+                            }}
+                            aria-disabled={currentPage === 1}
+                            className={currentPage === 1 ? "pointer-events-none opacity-50" : undefined}
+                            />
+                        </PaginationItem>
+                        <PaginationItem className="hidden sm:flex items-center text-sm font-medium">
+                            Page {currentPage} of {totalPages}
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationNext
+                            href="#"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                setCurrentPage((p) => Math.min(totalPages, p + 1));
+                            }}
+                            aria-disabled={currentPage === totalPages}
+                            className={currentPage === totalPages ? "pointer-events-none opacity-50" : undefined}
+                            />
+                        </PaginationItem>
+                        </PaginationContent>
+                    </Pagination>
+                )}
            </>
           ) : (
             <div className="text-center py-16 border-2 border-dashed rounded-lg mt-8">

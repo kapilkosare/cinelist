@@ -13,7 +13,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { TrailerModal } from '@/components/features/trailer-modal';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
-import { Search, SlidersHorizontal } from 'lucide-react';
+import { Search, SlidersHorizontal, Grid, List, LayoutList } from 'lucide-react';
 import {
     Select,
     SelectContent,
@@ -27,13 +27,15 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion";
-import { buttonVariants } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { getGenreNames } from '@/lib/utils';
+import { MovieListItem } from '@/components/features/MovieListItem';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 
 const contentTypes: ContentType[] = ["Movie", "Web Series", "OTT", "Documentary", "Other"];
 const allTabs = ["All", ...contentTypes];
+type ViewMode = 'grid' | 'list' | 'details';
 
 export default function HomePage() {
   const { user, isUserLoading } = useUser();
@@ -44,6 +46,7 @@ export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [sortOrder, setSortOrder] = useState('title-asc');
+  const [viewMode, setViewMode] = useState<ViewMode>('details');
 
   const moviesQuery = useMemoFirebase(() => 
     query(
@@ -198,16 +201,54 @@ export default function HomePage() {
     </div>
   );
 
+  const viewSwitcher = (
+    <TooltipProvider>
+      <div className="flex items-center gap-1 rounded-md bg-muted p-1">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button variant={viewMode === 'grid' ? 'outline' : 'ghost'} size="icon" className="h-8 w-8 bg-background" onClick={() => setViewMode('grid')}>
+              <Grid className="h-4 w-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>Grid View</TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button variant={viewMode === 'list' ? 'outline' : 'ghost'} size="icon" className="h-8 w-8 bg-background" onClick={() => setViewMode('list')}>
+              <List className="h-4 w-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>List View</TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button variant={viewMode === 'details' ? 'outline' : 'ghost'} size="icon" className="h-8 w-8 bg-background" onClick={() => setViewMode('details')}>
+              <LayoutList className="h-4 w-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>Details View</TooltipContent>
+        </Tooltip>
+      </div>
+    </TooltipProvider>
+  );
 
   return (
     <AppLayout>
       <div className="container py-8">
-          <h1 className="text-3xl font-bold font-headline">
-            Browse Content
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            Browse our collection of movies, series, and more.
-          </p>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+                <h1 className="text-3xl font-bold font-headline">
+                    Browse Content
+                </h1>
+                <p className="text-muted-foreground mt-2">
+                    Browse our collection of movies, series, and more.
+                </p>
+            </div>
+            <div className="hidden md:block">
+                {viewSwitcher}
+            </div>
+        </div>
+          
 
           <Tabs value={activeTab} onValueChange={handleTabChange} className="mt-6">
             <div className="w-full overflow-x-auto">
@@ -222,11 +263,18 @@ export default function HomePage() {
                 {/* Mobile Filters */}
                 <div className="md:hidden">
                     <Accordion type="single" collapsible>
-                        <AccordionItem value="filters">
-                            <AccordionTrigger className={cn(buttonVariants({ variant: 'outline' }), 'w-full')}>
-                                <SlidersHorizontal className="mr-2 h-4 w-4" />
-                                Filters & Sort
-                            </AccordionTrigger>
+                        <AccordionItem value="filters" className="border-b-0">
+                            <div className="flex items-center justify-between">
+                                <AccordionTrigger className={cn(buttonVariants({ variant: 'outline' }), 'flex-1 justify-between pr-2')}>
+                                    <div className='flex items-center'>
+                                        <SlidersHorizontal className="mr-2 h-4 w-4" />
+                                        Filters & Sort
+                                    </div>
+                                </AccordionTrigger>
+                                <div className="ml-2">
+                                    {viewSwitcher}
+                                </div>
+                            </div>
                             <AccordionContent className="p-4 bg-muted/50 rounded-b-lg">
                                 <div className="space-y-4">
                                     {filtersContent}
@@ -244,23 +292,41 @@ export default function HomePage() {
             
             <div className="mt-8">
                 {isLoading && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-6 gap-y-10">
-                        {Array.from({ length: 10 }).map((_, i) => (
-                            <div key={i} className="space-y-3">
-                            <Skeleton className="aspect-video rounded-lg" />
-                            <Skeleton className="h-5 w-4/5 rounded-md" />
-                            <Skeleton className="h-9 w-full rounded-md" />
-                            </div>
-                        ))}
-                    </div>
+                    viewMode === 'grid' ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-6 gap-y-10">
+                            {Array.from({ length: 10 }).map((_, i) => (
+                                <div key={i} className="space-y-3">
+                                <Skeleton className="aspect-video rounded-lg" />
+                                <Skeleton className="h-5 w-4/5 rounded-md" />
+                                <Skeleton className="h-9 w-full rounded-md" />
+                                </div>
+                            ))}
+                        </div>
+                     ) : (
+                        <div className="space-y-4">
+                            {Array.from({ length: 5 }).map((_, i) => (
+                                <Skeleton key={i} className="h-28 w-full rounded-lg" />
+                            ))}
+                        </div>
+                     )
                 )}
-                {filteredMovies && filteredMovies.length > 0 && (
-                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-6 gap-y-10">
-                        {filteredMovies.map((movie) => (
-                            <MovieCard key={movie.id} movie={movie} onPlayTrailer={handlePlayTrailer} />
-                        ))}
-                    </div>
+                
+                {!isLoading && filteredMovies && filteredMovies.length > 0 && (
+                     viewMode === 'grid' ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-6 gap-y-10">
+                            {filteredMovies.map((movie) => (
+                                <MovieCard key={movie.id} movie={movie} onPlayTrailer={handlePlayTrailer} />
+                            ))}
+                        </div>
+                     ) : (
+                        <div className="space-y-4">
+                            {filteredMovies.map((movie) => (
+                                <MovieListItem key={movie.id} movie={movie} onPlayTrailer={handlePlayTrailer} view={viewMode} />
+                            ))}
+                        </div>
+                     )
                 )}
+
                 {!isLoading && filteredMovies && filteredMovies.length === 0 && (
                     <p className="text-muted-foreground mt-8 text-center">
                       {searchQuery ? `No results for "${searchQuery}" in this category.` : "No content found for this category."}
@@ -286,4 +352,3 @@ export default function HomePage() {
     </AppLayout>
   );
 }
-
